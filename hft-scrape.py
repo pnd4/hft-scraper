@@ -15,7 +15,7 @@ r = requests.get(url)
 if r.status_code != 200:
     print("ERROR: Request Denied")
 else:
-    print("item" + "|" + "skus" + "|" + "desc" + "|" + "code")
+    print("item" + "|" + "desc" + "|" + "code")
 
 soup = BeautifulSoup(r.text, "lxml")
 
@@ -45,14 +45,9 @@ for coupon in coupons:
     aggskus = aggsku_soup.find_all("div", class_="product-ids")
     for aggsku in aggskus:
         catalog[sku]["skus"].append(aggsku.get_text().split("#")[1])
-    print('"' + sku + '"|"', end='')
     for item_num in catalog[sku]["skus"]:
-        print(item_num + ",", end='')
-    print('"|"' + catalog[sku]["desc"] + '"|"' + catalog[sku]["code"] + '"')
+        print('"' + item_num + '"|"' + catalog[sku]["desc"] + '"|"' + catalog[sku]["code"] + '"')
     
-### 
-#print("[Example]\n\nItem: " + "63268" + "\nCode: " + catalog['62368']["code"] + "\nDesc: " + catalog['62368']["desc"] + "\n")
-
 ###
 #print("[Dict Node]\n",catalog['62368'], "\n\n")
 
