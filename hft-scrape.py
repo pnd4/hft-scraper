@@ -24,6 +24,7 @@ coupons = soup.find_all("div", re.compile("coupon-container*"))
 
 ## Create dict to store data-groups
 ## - catalog[0] = "12345"                                   -> dict-key, the items sku
+## - catalog[0]["skus"] = ['12345', '54321']                -> list of aggregate skus
 ## - catalog[0]["desc"] = "4in Angle Grinder"               -> the sku's desc
 ## - catalog[0]["barcode"] = "https://hft.com/12345.jpg"    -> coupon-barcode url
 ## - catalog[0]["code"] = "987654321"                       -> coupon-code
