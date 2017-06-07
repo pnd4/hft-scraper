@@ -29,16 +29,27 @@ coupons = soup.find_all("div", re.compile("coupon-container*"))
 ## - catalog[0]["code"] = "987654321"                       -> coupon-code
 catalog = {}
 
-## Go through all items and use each sku as a 'key'
+## Go through all coupons using each sku as a 'key'
 ## 
 for coupon in coupons:
     sku = coupon.find("a", attrs={"target": "_blank"})["href"].split("-")[-1].split(".")[-2]
     catalog[sku] = {}
-    catalog[sku]["skus"] = (sku, )
+    catalog[sku]["skus"] = []
     catalog[sku]["desc"] = coupon.img["alt"]
     catalog[sku]["barcode"] = coupon.find("img", attrs={"width": "188"})["src"]
     catalog[sku]["code"] = catalog[sku]["barcode"].split("/")[-1].split(".")[-2]
-
+    q_keyword = ('"' + catalog[sku]["desc"] + '"')
+    q_url = "https://www.harborfreight.com/catalogsearch/result/index/?q="
+    aggsku_req = requests.get(q_url + q_keyword)
+    aggsku_soup = BeautifulSoup(aggsku_req.text, "lxml")
+    aggskus = aggsku_soup.find_all("div", class_="product-ids")
+    for aggsku in aggskus:
+        catalog[sku]["skus"].append(aggsku.get_text().split("#")[1])
+    print('"' + sku + '"|"', end='')
+    for item_num in catalog[sku]["skus"]:
+        print(item_num + ",", end='')
+    print('"|"' + catalog[sku]["desc"] + '"|"' + catalog[sku]["code"] + '"')
+    
 ### 
 #print("[Example]\n\nItem: " + "63268" + "\nCode: " + catalog['62368']["code"] + "\nDesc: " + catalog['62368']["desc"] + "\n")
 
@@ -46,9 +57,9 @@ for coupon in coupons:
 #print("[Dict Node]\n",catalog['62368'], "\n\n")
 
 ## Print data from the Catalog
-for product in catalog:
-    print('"' + product + '"|"', end='')
-    for aggsku in catalog[product]["skus"]:
-        print(aggsku + ",", end='')
-    print('"|"' + catalog[product]["desc"] + '"|"' + catalog[product]["code"] + '"')
+#for product in catalog:
+#    print('"' + product + '"|"', end='')
+#    for item_num in catalog[product]["skus"]:
+#        print(item_num + ",", end='')
+#    print('"|"' + catalog[product]["desc"] + '"|"' + catalog[product]["code"] + '"')
 
