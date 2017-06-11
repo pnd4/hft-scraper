@@ -1,9 +1,15 @@
+## HFT Coupon Scraper (hft-scrape.py)
+# by Kevin 'pnd4' Tran
+# 
+# TODO: Sort by SKU
+
 #! python3
 # hft-scrape.py
 
 import requests, re, urllib, csv
 from bs4 import BeautifulSoup
 
+# Handle DNS Errors by continuing onto next element
 def sitecheck(url):
     status = None
     message = ''
@@ -48,10 +54,11 @@ if cpns == []:
     print("Could not find a coupon element.")
 else:
     print("Found ", len(cpns), " coupons.\n")
-    
+    print("--------------- Begin --------------")
     # Open csv-file for write
     csvFile = open('hft-spreadsheet.csv', 'w')
     csvWriter = csv.writer(csvFile, dialect='excel', quotechar='"', delimiter='|', quoting=csv.QUOTE_ALL)
+
     for c in cpns:
         try:
             # Select item-description
@@ -85,11 +92,11 @@ else:
             cSave = "{:.2f}".format(float(cPriceReg) - float(cPriceSale))
             print('Savings=', cSave)
 
-            # Clean-up
+            # Done with coupon page.
             rSoup.decompose()
             cRes.close()
 
-            ## Aggregate SKUs
+            # Aggregate SKUs
             cSkus = []
             aQuery = '"' + cText + '"'
             aUrl = "/catalogsearch/result/index/?q="
@@ -112,15 +119,10 @@ else:
             
         except:
             pass
+
+    # Final Cleanup
     csvFile.close()
 s.decompose()
 res.close()
-# TODO: 
 
-# TODO: Put all data on a row .. SKU | DESC | SAVE | CODE
-
-# TODO: Sort data by sku
-
-# TODO: Save data to CSV
-
-print("--------------- Done. --------------")
+print("--------------- Done ---------------")
